@@ -1,201 +1,575 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mina Ariana y el Agua de Lima - Investigación Multimedia</title>
-    
-    <!-- MapLibre GL CSS -->
-    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
-    
-    <style>
-        :root {
-            --primary-color: #1a1a2e;
-            --accent-color: #e94560;
-            --bg-color: #f8f9fa;
-            --text-color: #2c3e50;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Río Arriba — Periodismo de Datos y Acción Cívica</title>
+  <meta name="description" content="Experiencia web interactiva sobre el origen del agua del río Rímac y las amenazas socioambientales del trasvase Marcapomacocha." />
+  <meta property="og:title" content="Río Arriba — Sigue el agua de tu grifo hacia atrás" />
+  <meta property="og:description" content="Descubre de dónde viene realmente el agua que tomas en los distritos ribereños del río Rímac y por qué 115 metros amenazan a 11 millones." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+  <!-- MapLibre GL JS CSS & Script (CDN Público y Libre) -->
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            rimacNavy: '#0e1f39',
+            rimacYellow: '#ffeb3b',
+            rimacBone: '#fffbf6',
+            rimacCyan: '#56b6cb',
+            rimacSlate: '#3a6988',
+            rimacRed: '#ef4444'
+          },
+          boxShadow: {
+            'brutal': '4px 4px 0px #0e1f39',
+            'brutal-lg': '6px 6px 0px #0e1f39',
+            'brutal-sm': '2px 2px 0px #0e1f39'
+          }
         }
-        body {
-            font-family: 'Georgia', serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.8;
-        }
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            text-align: center;
-            padding: 4rem 2rem;
-            border-bottom: 5px solid var(--accent-color);
-        }
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            font-family: 'Arial', sans-serif;
-        }
-        header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-        main {
-            max-width: 850px;
-            margin: 3rem auto;
-            padding: 0 1.5rem;
-            background: white;
-            padding: 3rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        h2 {
-            font-family: 'Arial', sans-serif;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 0.4rem;
-            margin-top: 2.5rem;
-        }
-        p {
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-        }
-        .editorial-image {
-            width: 100%;
-            border-radius: 6px;
-            margin: 2rem 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .video-chapter {
-            margin: 3rem 0;
-            background: #f1f3f5;
-            padding: 2rem;
-            border-radius: 8px;
-            border-left: 5px solid var(--accent-color);
-        }
-        .video-chapter h3 {
-            font-family: 'Arial', sans-serif;
-            margin-top: 0;
-            color: var(--primary-color);
-        }
-        video {
-            width: 100%;
-            border-radius: 6px;
-            background: black;
-            margin-top: 1rem;
-        }
-        #map-container {
-            margin: 3rem 0;
-        }
-        #map {
-            width: 100%;
-            height: 450px;
-            border-radius: 6px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        footer {
-            text-align: center;
-            padding: 2rem;
-            background: var(--primary-color);
-            color: white;
-            font-family: 'Arial', sans-serif;
-            margin-top: 4rem;
-        }
-    </style>
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #fffbf6;
+      color: #0e1f39;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #fffbf6;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #56b6cb;
+      border-radius: 9999px;
+      border: 1px solid #0e1f39;
+    }
+    .map-marker {
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      transition: transform 0.25s ease;
+    }
+    .map-marker:hover {
+      transform: translate(-50%, -50%) scale(1.15);
+      z-index: 50;
+    }
+    .draggable-item {
+      cursor: grab;
+      user-select: none;
+    }
+    .draggable-item:active {
+      cursor: grabbing;
+    }
+    .draggable-item.dragging {
+      opacity: 0.5;
+      border-color: #56b6cb;
+    }
+  </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col selection:bg-[#ffeb3b] selection:text-[#0e1f39]">
 
-    <header>
-        <h1>Mina Ariana: Riesgo Hídrico y Amenaza Geológica en la Sierra Central</h1>
-        <p>Un reportaje multimedia interactivo sobre el proyecto minero y el abastecimiento de agua para Lima.</p>
-    </header>
+  <!-- ================= BARRA SUPERIOR DE NAVEGACIÓN ================= -->
+  <header class="sticky top-0 z-50 bg-[#fffbf6] border-b-2 border-[#0e1f39] shadow-sm">
+    <div class="bg-[#0e1f39] text-[#fffbf6] px-4 py-1.5 flex items-center justify-between text-xs font-mono">
+      <div class="flex items-center gap-2">
+        <span class="bg-[#ffeb3b] text-[#0e1f39] px-1.5 py-0.5 rounded-sm font-black text-[10px]">INCIDENCIA JOVEN</span>
+        <span class="hidden sm:inline">Defensa territorial de la Cuenca del Río Rímac</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="header-district-badge" class="bg-[#56b6cb] text-[#0e1f39] px-2 py-0.5 rounded-sm font-bold text-[10px]">
+          📍 San Juan de Lurigancho
+        </span>
+        <span class="text-[#ffeb3b] hidden md:inline">#RíoArriba #AguaParaLima</span>
+      </div>
+    </div>
 
-    <main>
-        <!-- SECCIÓN 1: INTRODUCCIÓN Y CONTEXTO URBANO -->
-        <section>
-            <h2>1. El Contexto y las Fuentes de Agua</h2>
-            <p>El debate en torno al proyecto minero Ariana no solo involucra a las comunidades altoandinas, sino que pone bajo la lupa la seguridad hídrica de millones de habitantes en la capital. Las cuencas y los flujos fluviales enfrentan una presión constante frente a megaproyectos de extracción en zonas de alta fragilidad ecológica.</p>
-            
-            <!-- Imagen 1 -->
-            <img src="magnific__cinematic-lighting-gritty-urban-river-dramatic-atm__62271.png" alt="Contexto urbano y fluvial" class="editorial-image">
-        </section>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      <a href="#inicio" onclick="switchTab('tab-inicio')" class="flex items-center gap-3 group">
+        <div class="h-10 w-12 rounded-xl bg-white border-2 border-[#0e1f39] shadow-brutal-sm flex items-center justify-center p-0.5 overflow-hidden">
+          <span class="font-black text-xs text-[#0e1f39]">RA</span>
+        </div>
+        <div>
+          <span class="font-black text-lg tracking-tight text-[#0e1f39] flex items-center gap-1 leading-none">
+            RÍO ARRIBA
+            <span class="bg-[#ffeb3b] text-[10px] px-1.5 py-0.5 rounded border border-[#0e1f39] font-bold">LIMA-JUNÍN</span>
+          </span>
+          <span class="text-[10px] text-[#3a6988] font-bold tracking-wider uppercase block mt-0.5">
+            Salvemos el Río Rímac · Datos & Acción Cívica
+          </span>
+        </div>
+      </a>
 
-        <!-- SECCIÓN 2: LAGUNAS Y GLACIARES -->
-        <section>
-            <h2>2. Lagunas Altoandinas y Ecosistemas Frágiles</h2>
-            <p>La zona de influencia directa alberga un complejo sistema de lagunas y bofedales que regulan el recurso hídrico de la región. Cualquier alteración en este delicado equilibrio pone en riesgo el almacenamiento natural de agua para las épocas de estiaje.</p>
-            
-            <!-- Imagen 2 -->
-            <img src="magnific__crystal-clear-highaltitude-glacial-lagoons-pristin__62272.png" alt="Lagunas glaciares altoandinas" class="editorial-image">
-        </section>
+      <nav class="flex items-center bg-white p-1 rounded-2xl border-2 border-[#0e1f39] shadow-brutal-sm overflow-x-auto max-w-full">
+        <button id="nav-btn-inicio" onclick="switchTab('tab-inicio')" class="tab-nav-btn px-3.5 py-1.5 rounded-xl text-xs font-black transition-all border-2 border-transparent bg-[#ffeb3b] border-[#0e1f39] shadow-brutal-sm whitespace-nowrap">
+          1. Inicio & Diagnóstico
+        </button>
+        <button id="nav-btn-scrolly" onclick="switchTab('tab-scrolly')" class="tab-nav-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#0e1f39] hover:bg-slate-100 transition-all border-2 border-transparent whitespace-nowrap">
+          2. Scrollytelling & Mapa
+        </button>
+        <button id="nav-btn-ariana" onclick="switchTab('tab-ariana')" class="tab-nav-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#0e1f39] hover:bg-slate-100 transition-all border-2 border-transparent whitespace-nowrap">
+          3. Amenaza Ariana & Videos
+        </button>
+        <button id="nav-btn-reto" onclick="switchTab('tab-reto')" class="tab-nav-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#0e1f39] hover:bg-slate-100 transition-all border-2 border-transparent whitespace-nowrap">
+          4. Reto 30s & Tarjeta Viral
+        </button>
+      </nav>
+    </div>
+  </header>
 
-        <!-- SECCIÓN 3: GEOLOGÍA Y RIESGOS SÍSMICOS -->
-        <section>
-            <h2>3. Geología, Fallas y Cortes Transversales</h2>
-            <p>Los informes técnicos han advertido sobre la naturaleza del suelo en la zona del proyecto, caracterizado por formaciones de roca caliza y sistemas kársticos propensos a filtraciones y vulnerabilidad ante eventos sísmicos de gran magnitud.</p>
-            
-            <!-- Imagen 3 y 4 -->
-            <img src="magnific__massive-andean-mountain-range-crosssection-dramati__62273.png" alt="Cordillera de los Andes y sección transversal" class="editorial-image">
-            <img src="magnific__remove-the-lightning__62274.png" alt="Detalle geológico y estructural" class="editorial-image">
-        </section>
+  <!-- ================= CONTENEDOR PRINCIPAL ================= -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-        <!-- SECCIÓN 4: REPORTAJES AUDIOVISUALES (CAPÍTULOS EN ORDEN) -->
-        <section>
-            <h2>4. Reportajes Audiovisuales y Hallazgos</h2>
-            <p>A través de esta serie de micro-documentales, desglosamos los puntos críticos de la investigación periodística:</p>
-
-            <!-- Video 1 -->
-            <div class="video-chapter">
-                <h3>Capítulo 1: La Distancia Letal (115 metros)</h3>
-                <p>Análisis de la proximidad crítica entre los componentes mineros y los túneles de trasvase.</p>
-                <video controls>
-                    <source src="copy_8B86821E-51ED-45B8-9CAC-5F0F0450B633.mp4" type="video/mp4">
-                    Tu navegador no soporta la reproducción de video.
-                </video>
+    <!-- ================= PESTAÑA 1 ================= -->
+    <section id="tab-inicio" class="tab-content space-y-8 animate-in fade-in duration-300">
+      <div class="bg-white rounded-3xl border-3 border-[#0e1f39] shadow-brutal-lg p-6 sm:p-10 relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-7 space-y-4">
+            <div class="inline-flex items-center gap-2 bg-[#ffeb3b] text-[#0e1f39] px-3 py-1 rounded-sm border-2 border-[#0e1f39] shadow-brutal-sm text-xs font-black uppercase">
+              <span>⚠️</span>
+              <span>Sigue el agua de tu grifo hacia atrás</span>
             </div>
 
-            <!-- Video 2 -->
-            <div class="video-chapter">
-                <h3>Capítulo 2: Peligro Geológico (Roca Caliza y Terremotos)</h3>
-                <p>Evaluación de los riesgos ante sismos y la estabilidad del subsuelo kárstico.</p>
-                <video controls>
-                    <source src="copy_4288F13D-B864-454F-ABE0-C154FD5E1470.mp4" type="video/mp4">
-                    Tu navegador no soporta la reproducción de video.
-                </video>
+            <h1 class="text-3xl sm:text-5xl font-black text-[#0e1f39] tracking-tight leading-tight">
+              El agua que tomas en tu barrio no nace donde tú crees.
+            </h1>
+
+            <p class="text-sm sm:text-base text-slate-700 leading-relaxed font-medium">
+              Cuando abres el caño en los distritos de la cuenca baja y media del río Rímac, asumes que el río limeño provee todo. 
+              <strong>La realidad es que en época seca (mayo a noviembre), Lima no tiene lluvias y el 62% al 70% de tu agua</strong> proviene de un trasvase subterráneo a 150 km en Junín.
+            </p>
+
+            <div class="p-5 rounded-2xl bg-[#fffbf6] border-2 border-[#0e1f39] shadow-brutal space-y-3">
+              <label for="district-selector" class="block font-black text-xs uppercase tracking-wide text-[#0e1f39]">
+                Selecciona tu distrito ribereño del Río Rímac:
+              </label>
+              <div class="flex flex-col sm:flex-row gap-3">
+                <select id="district-selector" onchange="handleDistrictChange(this.value)" class="flex-1 bg-white border-2 border-[#0e1f39] font-bold text-sm text-[#0e1f39] rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#ffeb3b] focus:outline-none shadow-sm cursor-pointer">
+                  <option value="sjl" selected>San Juan de Lurigancho (Margen izquierda / Ramal Norte)</option>
+                  <option value="cercado">Cercado de Lima (Margen central / Ribera histórica)</option>
+                  <option value="rimac">Rímac (Distrito tradicional ribereño)</option>
+                  <option value="agustino">El Agustino (Zona La Atarjea / Bocatoma urbana)</option>
+                  <option value="chosica">Chosica / Lurigancho-Chosica (Cuenca media)</option>
+                </select>
+                <button onclick="switchTab('tab-scrolly')" class="bg-[#ffeb3b] hover:bg-yellow-300 text-[#0e1f39] font-black text-xs uppercase px-5 py-3 rounded-xl border-2 border-[#0e1f39] shadow-brutal-sm flex items-center justify-center gap-2 transition">
+                  <span>Iniciar Viaje</span>
+                  <span>→</span>
+                </button>
+              </div>
             </div>
 
-            <!-- Video 3 -->
-            <div class="video-chapter">
-                <h3>Capítulo 3: Fact-Checking (Mitos vs Hechos)</h3>
-                <p>Contraste de datos oficiales y peritajes técnicos frente a la versión de las empresas involucradas.</p>
-                <video controls>
-                    <source src="copy_21CE63EE-ABA9-498F-8B9A-1BF9D412BE32.mp4" type="video/mp4">
-                    Tu navegador no soporta la reproducción de video.
-                </video>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+              <div class="p-3 bg-[#0e1f39] text-white rounded-xl border-2 border-[#0e1f39]">
+                <span class="text-[10px] font-mono text-[#ffeb3b] uppercase block">Dependencia de Estiaje:</span>
+                <span id="stat-dependence" class="text-xl font-black text-white">68% Crítico</span>
+              </div>
+              <div class="p-3 bg-[#0e1f39] text-white rounded-xl border-2 border-[#0e1f39]">
+                <span class="text-[10px] font-mono text-[#56b6cb] uppercase block">Planta de Tratamiento:</span>
+                <span id="stat-plant" class="text-xs font-bold text-slate-100">Huachipa / Atarjea</span>
+              </div>
+              <div class="p-3 bg-[#0e1f39] text-white rounded-xl border-2 border-[#0e1f39]">
+                <span class="text-[10px] font-mono text-emerald-400 uppercase block">Distancia a la Fuente:</span>
+                <span id="stat-distance" class="text-xl font-black text-[#ffeb3b]">145 km</span>
+              </div>
             </div>
-        </section>
+          </div>
 
-        <!-- SECCIÓN 5: MAPA INTERACTIVO -->
-        <section id="map-container">
-            <h2>5. Mapa Interactivo de la Zona de Estudio</h2>
-            <p>Explora la ubicación geoespacial de la infraestructura del proyecto y su relación directa con las fuentes hídricas.</p>
-            <div id="map"></div>
-        </section>
-    </main>
+          <!-- IMAGEN 1 DE MAGNIFIC EN EL HERO -->
+          <div class="lg:col-span-5 flex flex-col items-center justify-center">
+            <div class="w-full bg-[#fffbf6] rounded-3xl border-3 border-[#0e1f39] shadow-brutal p-5 text-center space-y-4">
+              <div class="relative rounded-2xl overflow-hidden border-2 border-[#0e1f39] h-52 bg-[#0e1f39]">
+                <img src="magnific__cinematic-lighting-gritty-urban-river-dramatic-atm__62271.png" alt="Contexto urbano y fluvial" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0e1f39] via-transparent to-black/30"></div>
+                <div class="absolute bottom-3 left-3 right-3 text-left">
+                  <span class="bg-[#ffeb3b] text-[#0e1f39] text-[9px] font-black uppercase px-2 py-0.5 rounded border border-[#0e1f39]">
+                    FOTOGRAFÍA MAGNIFIC 1
+                  </span>
+                  <p class="text-xs font-bold text-white mt-1">
+                    Iluminación cinemática y entorno fluvial de la cuenca
+                  </p>
+                </div>
+              </div>
 
-    <footer>
-        <p>Investigación Periodística Multimedia — Mina Ariana © 2026</p>
-    </footer>
+              <button onclick="switchTab('tab-scrolly')" class="w-full bg-[#56b6cb] hover:bg-sky-400 text-[#0e1f39] font-black text-xs uppercase py-2.5 px-4 rounded-xl border-2 border-[#0e1f39] shadow-brutal-sm transition">
+                Entrar al Scrollytelling interactivo →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <!-- MapLibre GL JS -->
-    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
-    <script>
-        // Inicialización del mapa interactivo con MapLibre
-        const map = new maplibregl.Map({
-            container: 'map',
-            style: 'https://demotiles.maplibre.org/style.json',
-            center: [-76.35, -11.60], // Coordenadas aproximadas de la zona central
-            zoom: 10
-        });
-    </script>
+    <!-- ================= PESTAÑA 2: SCROLLYTELLING Y MAPA ================= -->
+    <section id="tab-scrolly" class="tab-content hidden space-y-6 animate-in fade-in duration-300">
+      <div class="bg-[#0e1f39] text-white p-5 sm:p-6 rounded-3xl border-3 border-[#0e1f39] shadow-brutal flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <span class="bg-[#ffeb3b] text-[#0e1f39] px-2.5 py-0.5 rounded-sm font-black text-xs uppercase tracking-wider">
+            PESTAÑA 2: MAPA EN VIVO & SCROLL
+          </span>
+          <h2 class="text-xl sm:text-2xl font-black text-white mt-1">
+            Recorrido Río Arriba: Del Grifo a la Cordillera de Junín
+          </h2>
+          <p class="text-xs text-slate-300 mt-0.5">
+            Haz scroll vertical en las tarjetas o pulsa las paradas para que el mapa vuele automáticamente por la cuenca.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- MAPA MAPLIBRE (IZQUIERDA) -->
+        <div class="lg:col-span-6 lg:sticky lg:top-24 space-y-3">
+          <div class="bg-white rounded-3xl border-3 border-[#0e1f39] shadow-brutal overflow-hidden">
+            <div class="bg-[#0e1f39] text-white px-4 py-2.5 flex items-center justify-between text-xs font-mono border-b-2 border-[#0e1f39]">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="font-bold">MapLibre GL JS Activo</span>
+              </div>
+              <span id="map-altitude-gauge" class="text-[#ffeb3b] font-bold">Cota: 280 msnm</span>
+            </div>
+            <div id="map" class="w-full h-[400px] sm:h-[480px] bg-slate-100 relative"></div>
+            <div class="p-3 bg-[#fffbf6] border-t-2 border-[#0e1f39] flex items-center justify-between gap-2 text-xs">
+              <span class="font-bold text-[11px] text-slate-600">Saltar a:</span>
+              <div class="flex gap-1.5 overflow-x-auto">
+                <button onclick="flyToStop(1)" class="px-2.5 py-1 rounded-lg bg-white border-2 border-[#0e1f39] font-bold hover:bg-[#ffeb3b] text-[11px] shadow-brutal-sm">1. Lima</button>
+                <button onclick="flyToStop(2)" class="px-2.5 py-1 rounded-lg bg-white border-2 border-[#0e1f39] font-bold hover:bg-[#ffeb3b] text-[11px] shadow-brutal-sm">2. Lagunas</button>
+                <button onclick="flyToStop(3)" class="px-2.5 py-1 rounded-lg bg-white border-2 border-[#0e1f39] font-bold hover:bg-[#ffeb3b] text-[11px] shadow-brutal-sm">3. Cordillera</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TARJETAS CON LAS 4 IMÁGENES DE MAGNIFIC (DERECHA) -->
+        <div class="lg:col-span-6 space-y-6" id="scrolly-cards-container">
+          
+          <!-- PARADA 1: Usa la Imagen 1 -->
+          <article id="stop-card-1" class="scrolly-stop-card bg-white rounded-3xl border-3 border-[#0e1f39] shadow-brutal p-5 sm:p-6 space-y-4 ring-2 ring-[#56b6cb]" data-stop="1">
+            <span class="bg-[#56b6cb] text-[#0e1f39] px-2.5 py-0.5 rounded-sm font-black text-xs uppercase border border-[#0e1f39]">PARADA 1 · CUENCA URBANA</span>
+            <h3 class="text-xl font-black text-[#0e1f39]">El Río Rímac en tu distrito: La ilusión del agua visible</h3>
+            
+            <div class="relative h-56 rounded-2xl overflow-hidden border-2 border-[#0e1f39] bg-slate-900">
+              <img src="magnific__cinematic-lighting-gritty-urban-river-dramatic-atm__62271.png" alt="Entorno urbano y fluvial" class="w-full h-full object-cover" />
+              <div class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded font-mono">magnific__cinematic-lighting...62271.png</div>
+            </div>
+            
+            <p class="text-xs sm:text-sm text-slate-700 font-medium">Entre mayo y noviembre el caudal natural del Rímac baja drásticamente. El agua potable ingresa a Lima gracias al trasvase desde la sierra.</p>
+          </article>
+
+          <!-- PARADA 2: Usa la Imagen 2 -->
+          <article id="stop-card-2" class="scrolly-stop-card bg-white rounded-3xl border-3 border-[#0e1f39] shadow-brutal p-5 sm:p-6 space-y-4 opacity-90" data-stop="2">
+            <span class="bg-[#ffeb3b] text-[#0e1f39] px-2.5 py-0.5 rounded-sm font-black text-xs uppercase border border-[#0e1f39]">PARADA 2 · LAGUNAS GLACIARES</span>
+            <h3 class="text-xl font-black text-[#0e1f39]">Recursos hídricos y lagunas altoandinas cristalinas</h3>
+            
+            <div class="relative h-56 rounded-2xl overflow-hidden border-2 border-[#0e1f39] bg-slate-900">
+              <img src="magnific__crystal-clear-highaltitude-glacial-lagoons-pristin__62272.png" alt="Lagunas glaciares" class="w-full h-full object-cover" />
+              <div class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded font-mono">magnific__crystal-clear...62272.png</div>
+            </div>
+
+            <p class="text-xs sm:text-sm text-slate-700 font-medium">Las lagunas altoandinas almacenan el recurso que luego es conducido hacia la costa para abastecer a la capital.</p>
+          </article>
+
+          <!-- PARADA 3: Usa las Imágenes 3 y 4 -->
+          <article id="stop-card-3" class="scrolly-stop-card bg-white rounded-3xl border-3 border-[#0e1f39] shadow-brutal p-5 sm:p-6 space-y-4 opacity-90" data-stop="3">
+            <span class="bg-[#ef4444] text-white px-2.5 py-0.5 rounded-sm font-black text-xs uppercase border border-[#0e1f39]">PARADA 3 · GEOLOGÍA Y CORDILLERA</span>
+            <h3 class="text-xl font-black text-[#0e1f39]">Sección transversal y formaciones rocosas</h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="relative h-40 rounded-xl overflow-hidden border-2 border-[#0e1f39] bg-slate-900">
+                <img src="magnific__massive-andean-mountain-range-crosssection-dramati__62273.png" alt="Cordillera de los Andes" class="w-full h-full object-cover" />
+                <span class="absolute bottom-1 left-2 text-[9px] text-white font-mono bg-black/70 px-1 rounded">Imagen 3</span>
+              </div>
+              <div class="relative h-40 rounded-xl overflow-hidden border-2 border-[#0e1f39] bg-slate-900">
+                <img src="magnific__remove-the-lightning__62274.png" alt="Detalle geológico" class="w-full h-full object-cover" />
+                <span class="absolute bottom-1 left-2 text-[9px] text-white font-mono bg-black/70 px-1 rounded">Imagen 4</span>
+              </div>
+            </div>
+
+            <p class="text-xs sm:text-sm text-slate-700 font-medium">El estudio geológico transversal muestra la cercanía entre los proyectos mineros y los túneles de agua subterráneos.</p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PESTAÑA 3: AMENAZA ARIANA & 3 VIDEOS MP4 EN ORDEN ================= -->
+    <section id="tab-ariana" class="tab-content hidden space-y-8 animate-in fade-in duration-300">
+      <div class="bg-white rounded-3xl border-3 border-[#0e1f39] shadow-brutal p-6 sm:p-8 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="bg-[#ef4444] text-white px-3 py-1 rounded-sm font-black text-xs uppercase border-2 border-[#0e1f39]">
+            PESTAÑA 3: INVESTIGACIÓN PERIODÍSTICA & MICRO-VIDEOS
+          </span>
+          <span class="text-xs font-mono font-bold text-[#0e1f39] bg-[#ffeb3b] px-2 py-0.5 rounded border border-[#0e1f39]">
+            115 Metros de Distancia
+          </span>
+        </div>
+
+        <h2 class="text-2xl sm:text-4xl font-black text-[#0e1f39] leading-tight">
+          La Amenaza de Mina Ariana: 3 Micro-Videos en Formato MP4
+        </h2>
+
+        <p class="text-xs sm:text-sm text-slate-700 max-w-3xl leading-relaxed font-medium">
+          Aquí tienes tus tres micro-videos oficiales en orden riguroso (convertidos a MP4 para máxima compatibilidad con todos los navegadores).
+        </p>
+
+        <!-- Cuadrícula con los 3 Videos en Orden Exacto -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          
+          <!-- VIDEO 1: copy_8B86821E... -->
+          <div class="bg-[#0e1f39] text-white rounded-2xl border-2 border-[#0e1f39] shadow-brutal-sm overflow-hidden flex flex-col justify-between">
+            <div class="p-3 bg-[#16213e] border-b border-slate-700 flex justify-between items-center text-xs">
+              <span class="font-black text-[#ffeb3b]">CAPÍTULO 1</span>
+              <span class="text-[10px] font-mono text-slate-300">La Distancia Letal</span>
+            </div>
+            <div class="p-3 bg-black">
+              <video controls class="w-full rounded-lg">
+                <source src="copy_8B86821E-51ED-45B8-9CAC-5F0F0450B633.mp4" type="video/mp4">
+                Tu navegador no soporta video.
+              </video>
+            </div>
+            <div class="p-4 text-xs space-y-1">
+              <p class="text-slate-300">«115 metros de distancia entre la presa de relaves y el túnel de agua para Lima.»</p>
+            </div>
+          </div>
+
+          <!-- VIDEO 2: copy_4288F13D... -->
+          <div class="bg-[#0e1f39] text-white rounded-2xl border-2 border-[#0e1f39] shadow-brutal-sm overflow-hidden flex flex-col justify-between">
+            <div class="p-3 bg-[#16213e] border-b border-slate-700 flex justify-between items-center text-xs">
+              <span class="font-black text-[#56b6cb]">CAPÍTULO 2</span>
+              <span class="text-[10px] font-mono text-slate-300">Peligro Geológico</span>
+            </div>
+            <div class="p-3 bg-black">
+              <video controls class="w-full rounded-lg">
+                <source src="copy_4288F13D-B864-454F-ABE0-C154FD5E1470.mp4" type="video/mp4">
+                Tu navegador no soporta video.
+              </video>
+            </div>
+            <div class="p-4 text-xs space-y-1">
+              <p class="text-slate-300">«Roca caliza, karst y comportamiento de fallas ante sismos de gran magnitud.»</p>
+            </div>
+          </div>
+
+          <!-- VIDEO 3: copy_21CE63EE... -->
+          <div class="bg-[#0e1f39] text-white rounded-2xl border-2 border-[#0e1f39] shadow-brutal-sm overflow-hidden flex flex-col justify-between">
+            <div class="p-3 bg-[#16213e] border-b border-slate-700 flex justify-between items-center text-xs">
+              <span class="font-black text-[#ff2a7a]">CAPÍTULO 3</span>
+              <span class="text-[10px] font-mono text-slate-300">Fact-Checking</span>
+            </div>
+            <div class="p-3 bg-black">
+              <video controls class="w-full rounded-lg">
+                <source src="copy_21CE63EE-ABA9-498F-8B9A-1BF9D412BE32.mp4" type="video/mp4">
+                Tu navegador no soporta video.
+              </video>
+            </div>
+            <div class="p-4 text-xs space-y-1">
+              <p class="text-slate-300">«Mitos vs Hechos y sustento legal de la sentencia judicial preventiva.»</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PESTAÑA 4: RETO Y TARJETA VIRAL ================= -->
+    <section id="tab-reto" class="tab-content hidden space-y-8 animate-in fade-in duration-300">
+      <div id="challenge-container" class="bg-white rounded-3xl border-3 border-[#0e1f39] shadow-brutal p-6 sm:p-8 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <span class="bg-[#ffeb3b] text-[#0e1f39] px-3 py-1 rounded-sm font-black text-xs uppercase border-2 border-[#0e1f39]">
+              GAMIFICACIÓN PEDAGÓGICA
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-black text-[#0e1f39] mt-1">
+              El Reto de los 30 Segundos: Ordena la Cadena Causal
+            </h2>
+          </div>
+          <div id="challenge-timer" class="w-14 h-14 rounded-2xl bg-[#ffeb3b] text-[#0e1f39] border-3 border-[#0e1f39] shadow-brutal-sm flex items-center justify-center font-mono font-black text-xl">
+            30s
+          </div>
+        </div>
+
+        <div id="puzzle-list" class="space-y-3">
+          <div class="draggable-item p-4 rounded-2xl bg-white border-2 border-[#0e1f39] shadow-brutal-sm flex items-center justify-between gap-3" draggable="true" data-step="3">
+            <span class="block-step-index w-7 h-7 rounded-xl bg-slate-100 text-[#0e1f39] font-mono font-black text-xs flex items-center justify-center border border-[#0e1f39]">1</span>
+            <p class="text-xs sm:text-sm font-bold text-[#0e1f39] flex-1">La presa minera Ariana se autorizó a 115 metros del túnel de agua.</p>
+          </div>
+          <div class="draggable-item p-4 rounded-2xl bg-white border-2 border-[#0e1f39] shadow-brutal-sm flex items-center justify-between gap-3" draggable="true" data-step="1">
+            <span class="block-step-index w-7 h-7 rounded-xl bg-slate-100 text-[#0e1f39] font-mono font-black text-xs flex items-center justify-center border border-[#0e1f39]">2</span>
+            <p class="text-xs sm:text-sm font-bold text-[#0e1f39] flex-1">El 68% del agua de Lima proviene de lagunas en Junín durante el estiaje.</p>
+          </div>
+          <div class="draggable-item p-4 rounded-2xl bg-white border-2 border-[#0e1f39] shadow-brutal-sm flex items-center justify-between gap-3" draggable="true" data-step="2">
+            <span class="block-step-index w-7 h-7 rounded-xl bg-slate-100 text-[#0e1f39] font-mono font-black text-xs flex items-center justify-center border border-[#0e1f39]">3</span>
+            <p class="text-xs sm:text-sm font-bold text-[#0e1f39] flex-1">El agua cruza la cordillera a través del Túnel Trasandino Cuevas-Milloc.</p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-2">
+          <span id="puzzle-feedback" class="text-xs font-bold text-slate-600">Ordena los bloques y valida tu respuesta.</span>
+          <button onclick="validatePuzzle()" class="bg-[#ffeb3b] text-[#0e1f39] font-black text-xs uppercase px-6 py-3 rounded-xl border-2 border-[#0e1f39] shadow-brutal">
+            Validar Cadena Causal →
+          </button>
+        </div>
+      </div>
+
+      <!-- TARJETA WRAPPED -->
+      <div id="viral-card-container" class="hidden space-y-6">
+        <div class="bg-[#0e1f39] text-white p-6 sm:p-10 rounded-3xl border-3 border-[#0e1f39] shadow-brutal-lg text-center space-y-6">
+          <h3 class="text-2xl sm:text-4xl font-black text-white">¡Reto Superado! Tu Tarjeta Oficial</h3>
+          <button onclick="downloadViralCard()" class="bg-[#ffeb3b] text-[#0e1f39] font-black text-xs uppercase px-6 py-3 rounded-xl border-2 border-[#0e1f39] shadow-brutal">
+            ⬇ Descargar Tarjeta (PNG)
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-white border-t-3 border-[#0e1f39] py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-600">
+      <span class="font-black text-[#0e1f39] text-sm">RÍO ARRIBA · Periodismo de Datos & Acción Cívica</span>
+      <span>Lima & Cuenca Alta del Rímac</span>
+    </div>
+  </footer>
+
+  <div id="toast-notification" class="fixed bottom-6 right-6 z-50 hidden bg-[#0e1f39] text-white px-4 py-3 rounded-2xl border-2 border-[#ffeb3b] shadow-brutal text-xs">
+    <span id="toast-text">Notificación</span>
+  </div>
+
+  <canvas id="hidden-render-canvas" class="hidden" width="1080" height="1920"></canvas>
+
+  <script>
+    const DISTRICT_DATA = {
+      'sjl': { name: 'San Juan de Lurigancho', dependence: '68%', plant: 'Huachipa / La Atarjea', distanceKm: 145 },
+      'cercado': { name: 'Cercado de Lima', dependence: '62%', plant: 'La Atarjea', distanceKm: 150 },
+      'rimac': { name: 'Rímac', dependence: '64%', plant: 'La Atarjea', distanceKm: 152 },
+      'agustino': { name: 'El Agustino', dependence: '62%', plant: 'La Atarjea', distanceKm: 148 },
+      'chosica': { name: 'Chosica', dependence: '58%', plant: 'Bocatoma Chosica', distanceKm: 110 }
+    };
+
+    let currentDistrictKey = 'sjl';
+    let mapInstance = null;
+    let activeStopIndex = 1;
+
+    const MAP_STOPS = {
+      1: { center: [-77.012, -12.045], zoom: 12.5, pitch: 30, alt: '280 msnm' },
+      2: { center: [-76.345, -11.705], zoom: 13, pitch: 45, alt: '3,000 msnm' },
+      3: { center: [-76.280, -11.450], zoom: 11.5, pitch: 50, alt: '4,400 msnm' }
+    };
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-nav-btn').forEach(btn => {
+        btn.classList.remove('bg-[#ffeb3b]', 'border-[#0e1f39]', 'shadow-brutal-sm', 'font-black');
+        btn.classList.add('text-[#0e1f39]', 'font-bold');
+      });
+
+      const target = document.getElementById(tabId);
+      if (target) target.classList.remove('hidden');
+
+      const btnMap = {
+        'tab-inicio': 'nav-btn-inicio',
+        'tab-scrolly': 'nav-btn-scrolly',
+        'tab-ariana': 'nav-btn-ariana',
+        'tab-reto': 'nav-btn-reto'
+      };
+
+      const activeBtn = document.getElementById(btnMap[tabId]);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-[#ffeb3b]', 'border-[#0e1f39]', 'shadow-brutal-sm', 'font-black');
+        activeBtn.classList.remove('font-bold');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (tabId === 'tab-scrolly') {
+        setTimeout(() => {
+          if (!mapInstance) initMapLibre();
+          else mapInstance.resize();
+        }, 150);
+      }
+    }
+
+    function handleDistrictChange(districtKey) {
+      currentDistrictKey = districtKey;
+      const data = DISTRICT_DATA[districtKey];
+      document.getElementById('header-district-badge').innerText = `📍 ${data.name}`;
+      document.getElementById('stat-dependence').innerText = `${data.dependence} Crítico`;
+      document.getElementById('stat-plant').innerText = data.plant;
+      document.getElementById('stat-distance').innerText = `${data.distanceKm} km`;
+      showToast(`Distrito actualizado: ${data.name}`);
+    }
+
+    function initMapLibre() {
+      if (mapInstance) return;
+      mapInstance = new maplibregl.Map({
+        container: 'map',
+        style: {
+          version: 8,
+          sources: {
+            'osm-tiles': { type: 'raster', tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize: 256 }
+          },
+          layers: [{ id: 'osm-layer', type: 'raster', source: 'osm-tiles', minzoom: 0, maxzoom: 19 }]
+        },
+        center: MAP_STOPS[1].center,
+        zoom: MAP_STOPS[1].zoom,
+        pitch: MAP_STOPS[1].pitch
+      });
+      mapInstance.addControl(new maplibregl.NavigationControl(), 'top-right');
+    }
+
+    function flyToStop(stopIndex) {
+      if (!mapInstance || !MAP_STOPS[stopIndex]) return;
+      activeStopIndex = stopIndex;
+      const stop = MAP_STOPS[stopIndex];
+      mapInstance.flyTo({ center: stop.center, zoom: stop.zoom, pitch: stop.pitch, speed: 1.2 });
+      document.getElementById('map-altitude-gauge').innerText = `Cota: ${stop.alt}`;
+    }
+
+    function validatePuzzle() {
+      const items = Array.from(document.getElementById('puzzle-list').children);
+      const order = items.map(it => it.getAttribute('data-step')).join('-');
+      const feedback = document.getElementById('puzzle-feedback');
+      if (order === '1-2-3') {
+        feedback.innerText = '✅ ¡Exacto! Cadena causal ordenada con éxito.';
+        feedback.className = 'text-xs font-black text-emerald-700';
+        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+        document.getElementById('viral-card-container').classList.remove('hidden');
+        showToast('¡Reto superado!');
+      } else {
+        feedback.innerText = '❌ El orden no es el correcto. Inténtalo de nuevo.';
+      }
+    }
+
+    function downloadViralCard() {
+      showToast('Generando tarjeta PNG...');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast-notification');
+      document.getElementById('toast-text').innerText = message;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3500);
+    }
+  </script>
 </body>
 </html>
