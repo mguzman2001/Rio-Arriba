@@ -3,184 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investigación Multimedia: Mina Ariana y Recursos Hídricos</title>
+    <title>Mina Ariana y el Agua de Lima - Investigación Multimedia</title>
     
     <!-- MapLibre GL CSS -->
     <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
     
-    <!-- Estilos generales limpios -->
     <style>
+        :root {
+            --primary-color: #1a1a2e;
+            --accent-color: #e94560;
+            --bg-color: #f8f9fa;
+            --text-color: #2c3e50;
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Georgia', serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
         }
         header {
-            background-color: #1a1a2e;
+            background-color: var(--primary-color);
             color: white;
             text-align: center;
-            padding: 2rem 1rem;
+            padding: 4rem 2rem;
+            border-bottom: 5px solid var(--accent-color);
         }
-        nav {
-            display: flex;
-            justify-content: center;
-            background-color: #16213e;
-            padding: 0.5rem;
-            flex-wrap: wrap;
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Arial', sans-serif;
         }
-        nav button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1rem;
-            padding: 0.75rem 1.2rem;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        nav button:hover, nav button.active {
-            background-color: #0f3460;
-            border-radius: 4px;
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
         }
         main {
-            max-width: 1000px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        .tab-content {
-            display: none;
+            max-width: 850px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
             background: white;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h2 {
+            font-family: 'Arial', sans-serif;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 0.4rem;
+            margin-top: 2.5rem;
+        }
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        .editorial-image {
+            width: 100%;
+            border-radius: 6px;
+            margin: 2rem 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .video-chapter {
+            margin: 3rem 0;
+            background: #f1f3f5;
             padding: 2rem;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--accent-color);
         }
-        .tab-content.active {
-            display: block;
+        .video-chapter h3 {
+            font-family: 'Arial', sans-serif;
+            margin-top: 0;
+            color: var(--primary-color);
         }
-        h2 { color: #1a1a2e; border-bottom: 2px solid #e94560; padding-bottom: 0.5rem; }
-        img { width: 100%; border-radius: 6px; margin: 1rem 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .video-container {
-            margin-bottom: 2.5rem;
-            background: #fafafa;
-            padding: 1.5rem;
+        video {
+            width: 100%;
             border-radius: 6px;
-            border: 1px solid #ddd;
+            background: black;
+            margin-top: 1rem;
         }
-        video { width: 100%; border-radius: 6px; background: black; }
-        #map { width: 100%; height: 450px; border-radius: 6px; margin-top: 1rem; }
+        #map-container {
+            margin: 3rem 0;
+        }
+        #map {
+            width: 100%;
+            height: 450px;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: var(--primary-color);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            margin-top: 4rem;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Investigación Periodística: Mina Ariana y el Agua de Lima</h1>
-        <p>Análisis multimedia de riesgos geológicos, cartografía y recursos hídricos</p>
+        <h1>Mina Ariana: Riesgo Hídrico y Amenaza Geológica en la Sierra Central</h1>
+        <p>Un reportaje multimedia interactivo sobre el proyecto minero y el abastecimiento de agua para Lima.</p>
     </header>
 
-    <!-- Barra de Pestañas de Navegación -->
-    <nav>
-        <button onclick="openTab(event, 'tab1')" class="active">1. Contexto Urbano</button>
-        <button onclick="openTab(event, 'tab2')">2. Lagunas y Glaciares</button>
-        <button onclick="openTab(event, 'tab3')">3. Geología Andina</button>
-        <button onclick="openTab(event, 'tab4')">4. Micro-Videos</button>
-        <button onclick="openTab(event, 'tab5')">5. Mapa Interactivo</button>
-    </nav>
-
     <main>
-        <!-- PESTAÑA 1: IMAGEN 1 (Entorno Urbano / Río) -->
-        <div id="tab1" class="tab-content active">
-            <h2>Contexto y Entorno</h2>
-            <p>Visualización cinematográfica del impacto hídrico y las cuencas que abastecen a la población.</p>
-            <img src="magnific__cinematic-lighting-gritty-urban-river-dramatic-atm__62271.png" alt="Contexto urbano y fluvial">
-        </div>
+        <!-- SECCIÓN 1: INTRODUCCIÓN Y CONTEXTO URBANO -->
+        <section>
+            <h2>1. El Contexto y las Fuentes de Agua</h2>
+            <p>El debate en torno al proyecto minero Ariana no solo involucra a las comunidades altoandinas, sino que pone bajo la lupa la seguridad hídrica de millones de habitantes en la capital. Las cuencas y los flujos fluviales enfrentan una presión constante frente a megaproyectos de extracción en zonas de alta fragilidad ecológica.</p>
+            
+            <!-- Imagen 1 -->
+            <img src="magnific__cinematic-lighting-gritty-urban-river-dramatic-atm__62271.png" alt="Contexto urbano y fluvial" class="editorial-image">
+        </section>
 
-        <!-- PESTAÑA 2: IMAGEN 2 (Lagunas Glaciares) -->
-        <div id="tab2" class="tab-content">
-            <h2>Recursos Hídricos y Glaciares</h2>
-            <p>Análisis de las reservas de agua altoandinas y las lagunas de la sierra central.</p>
-            <img src="magnific__crystal-clear-highaltitude-glacial-lagoons-pristin__62272.png" alt="Lagunas glaciares altoandinas">
-        </div>
+        <!-- SECCIÓN 2: LAGUNAS Y GLACIARES -->
+        <section>
+            <h2>2. Lagunas Altoandinas y Ecosistemas Frágiles</h2>
+            <p>La zona de influencia directa alberga un complejo sistema de lagunas y bofedales que regulan el recurso hídrico de la región. Cualquier alteración en este delicado equilibrio pone en riesgo el almacenamiento natural de agua para las épocas de estiaje.</p>
+            
+            <!-- Imagen 2 -->
+            <img src="magnific__crystal-clear-highaltitude-glacial-lagoons-pristin__62272.png" alt="Lagunas glaciares altoandinas" class="editorial-image">
+        </section>
 
-        <!-- PESTAÑA 3: IMAGEN 3 y 4 (Geología y Secciones) -->
-        <div id="tab3" class="tab-content">
-            <h2>Geología y Riesgos Estructurales</h2>
-            <p>Estudio de los cortes transversales y las formaciones montañosas de la zona de estudio.</p>
-            <img src="magnific__massive-andean-mountain-range-crosssection-dramati__62273.png" alt="Cordillera de los Andes y sección transversal">
-            <img src="magnific__remove-the-lightning__62274.png" alt="Detalle geológico y estructural">
-        </div>
+        <!-- SECCIÓN 3: GEOLOGÍA Y RIESGOS SÍSMICOS -->
+        <section>
+            <h2>3. Geología, Fallas y Cortes Transversales</h2>
+            <p>Los informes técnicos han advertido sobre la naturaleza del suelo en la zona del proyecto, caracterizado por formaciones de roca caliza y sistemas kársticos propensos a filtraciones y vulnerabilidad ante eventos sísmicos de gran magnitud.</p>
+            
+            <!-- Imagen 3 y 4 -->
+            <img src="magnific__massive-andean-mountain-range-crosssection-dramati__62273.png" alt="Cordillera de los Andes y sección transversal" class="editorial-image">
+            <img src="magnific__remove-the-lightning__62274.png" alt="Detalle geológico y estructural" class="editorial-image">
+        </section>
 
-        <!-- PESTAÑA 4: MICRO-VIDEOS EN ORDEN ESTRICTO -->
-        <div id="tab4" class="tab-content">
-            <h2>Reportajes Audiovisuales</h2>
-            <p>Serie documental de investigación basada en datos, peritajes técnicos y fact-checking.</p>
+        <!-- SECCIÓN 4: REPORTAJES AUDIOVISUALES (CAPÍTULOS EN ORDEN) -->
+        <section>
+            <h2>4. Reportajes Audiovisuales y Hallazgos</h2>
+            <p>A través de esta serie de micro-documentales, desglosamos los puntos críticos de la investigación periodística:</p>
 
-            <!-- Video 1: 115 metros -->
-            <div class="video-container">
+            <!-- Video 1 -->
+            <div class="video-chapter">
                 <h3>Capítulo 1: La Distancia Letal (115 metros)</h3>
+                <p>Análisis de la proximidad crítica entre los componentes mineros y los túneles de trasvase.</p>
                 <video controls>
                     <source src="copy_8B86821E-51ED-45B8-9CAC-5F0F0450B633.mp4" type="video/mp4">
                     Tu navegador no soporta la reproducción de video.
                 </video>
             </div>
 
-            <!-- Video 2: Roca Caliza y Sismos -->
-            <div class="video-container">
+            <!-- Video 2 -->
+            <div class="video-chapter">
                 <h3>Capítulo 2: Peligro Geológico (Roca Caliza y Terremotos)</h3>
+                <p>Evaluación de los riesgos ante sismos y la estabilidad del subsuelo kárstico.</p>
                 <video controls>
                     <source src="copy_4288F13D-B864-454F-ABE0-C154FD5E1470.mp4" type="video/mp4">
                     Tu navegador no soporta la reproducción de video.
                 </video>
             </div>
 
-            <!-- Video 3: Fact-Checking / Mitos -->
-            <div class="video-container">
+            <!-- Video 3 -->
+            <div class="video-chapter">
                 <h3>Capítulo 3: Fact-Checking (Mitos vs Hechos)</h3>
+                <p>Contraste de datos oficiales y peritajes técnicos frente a la versión de las empresas involucradas.</p>
                 <video controls>
                     <source src="copy_21CE63EE-ABA9-498F-8B9A-1BF9D412BE32.mp4" type="video/mp4">
                     Tu navegador no soporta la reproducción de video.
                 </video>
             </div>
-        </div>
+        </section>
 
-        <!-- PESTAÑA 5: MAPA INTERACTIVO CON MAPLIBRE -->
-        <div id="tab5" class="tab-content">
-            <h2>Cartografía Interactiva</h2>
-            <p>Visualización geoespacial de la cuenca, la ubicación de la mina Ariana y el sistema hídrico de Marcapomacocha.</p>
+        <!-- SECCIÓN 5: MAPA INTERACTIVO -->
+        <section id="map-container">
+            <h2>5. Mapa Interactivo de la Zona de Estudio</h2>
+            <p>Explora la ubicación geoespacial de la infraestructura del proyecto y su relación directa con las fuentes hídricas.</p>
             <div id="map"></div>
-        </div>
+        </section>
     </main>
+
+    <footer>
+        <p>Investigación Periodística Multimedia — Mina Ariana © 2026</p>
+    </footer>
 
     <!-- MapLibre GL JS -->
     <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
     <script>
-        // Control de pestañas
-        function openTab(evt, tabName) {
-            const contents = document.getElementsByClassName("tab-content");
-            for (let c of contents) {
-                c.classList.remove("active");
-            }
-            const buttons = document.getElementsByTagName("button");
-            for (let b of buttons) {
-                b.classList.remove("active");
-            }
-            document.getElementById(tabName).classList.add("active");
-            evt.currentTarget.classList.add("active");
-
-            // Si se abre la pestaña del mapa, ajustar su tamaño para evitar bugs visuales
-            if (tabName === 'tab5' && window.mapInstance) {
-                window.mapInstance.resize();
-            }
-        }
-
-        // Inicialización del mapa con MapLibre
-        window.addEventListener('DOMContentLoaded', () => {
-            window.mapInstance = new maplibregl.Map({
-                container: 'map',
-                style: 'https://demotiles.maplibre.org/style.json',
-                center: [-76.35, -11.60], // Coordenadas aproximadas de la zona de estudio
-                zoom: 10
-            });
+        // Inicialización del mapa interactivo con MapLibre
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: 'https://demotiles.maplibre.org/style.json',
+            center: [-76.35, -11.60], // Coordenadas aproximadas de la zona central
+            zoom: 10
         });
     </script>
 </body>
